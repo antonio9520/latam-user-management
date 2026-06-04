@@ -1,0 +1,46 @@
+<div class="flex flex-wrap gap-4">
+  <!-- Search -->
+  <mat-form-field appearance="outline" class="flex-1" style="min-width: 200px">
+    <mat-label>Search users</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      #searchInput
+      matInput
+      type="search"
+      placeholder="Name, email, username…"
+      [value]="store.filters().search"
+      (input)="onSearchInput(searchInput.value)"
+      aria-label="Search users"
+    />
+  </mat-form-field>
+
+  <!-- Role filter -->
+  <mat-form-field appearance="outline" style="width: 180px">
+    <mat-label>Role</mat-label>
+    <mat-select
+      [value]="store.filters().role ?? ''"
+      (selectionChange)="onRoleChange($event.value)"
+      aria-label="Filter by role"
+    >
+      @for (option of roleOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Active filter -->
+  <mat-form-field appearance="outline" style="width: 180px">
+    <mat-label>Status</mat-label>
+    <mat-select
+      [value]="
+        store.filters().active === undefined ? '' : store.filters().active ? 'true' : 'false'
+      "
+      (selectionChange)="onActiveChange($event.value)"
+      aria-label="Filter by status"
+    >
+      @for (option of activeOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
