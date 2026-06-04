@@ -1,0 +1,84 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <!-- First name -->
+    <mat-form-field appearance="outline">
+      <mat-label>First name</mat-label>
+      <input matInput formControlName="firstName" placeholder="John" autocomplete="given-name" />
+      @if (getError('firstName')) {
+        <mat-error>{{ getError('firstName') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Last name -->
+    <mat-form-field appearance="outline">
+      <mat-label>Last name</mat-label>
+      <input matInput formControlName="lastName" placeholder="Doe" autocomplete="family-name" />
+      @if (getError('lastName')) {
+        <mat-error>{{ getError('lastName') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Username -->
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="username" placeholder="johndoe" autocomplete="username" />
+      @if (getError('username')) {
+        <mat-error>{{ getError('username') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Email -->
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        placeholder="john@example.com"
+        autocomplete="email"
+      />
+      @if (getError('email')) {
+        <mat-error>{{ getError('email') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Role -->
+    <mat-form-field appearance="outline">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role" aria-label="Role">
+        @for (opt of roleOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+      @if (getError('role')) {
+        <mat-error>{{ getError('role') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Active -->
+    <div class="flex items-center self-center sm:pt-2">
+      <mat-slide-toggle formControlName="active" color="primary"> Active account </mat-slide-toggle>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="mt-8 flex justify-end gap-3">
+    <button type="button" mat-stroked-button [disabled]="isSaving()" (click)="onCancel()">
+      Cancel
+    </button>
+
+    <button
+      type="submit"
+      mat-raised-button
+      color="primary"
+      [disabled]="form.invalid || isSaving()"
+      aria-label="Save user"
+    >
+      @if (isSaving()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        Save
+      }
+    </button>
+  </div>
+</form>

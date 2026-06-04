@@ -11,3 +11,6 @@ export interface User {
   createdAt?: string;
   updatedAt?: string;
 }
+
+/** Fields required to create a new user. Excludes server-assigned fields. */
+export type CreateUserPayload = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;

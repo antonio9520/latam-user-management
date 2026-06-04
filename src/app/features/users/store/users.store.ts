@@ -1,10 +1,11 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 
 import { UsersApiService } from '../services/users-api.service';
-import { User } from '../models/user.model';
+import { User, CreateUserPayload } from '../models/user.model';
 import { UserFilters } from '../models/user-filter.model';
 
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 /**
  * Signal-based store for the users feature.
@@ -28,6 +29,8 @@ export class UsersStore {
   private readonly _filters = signal<UserFilters>({ search: '' });
   private readonly _total = signal(0);
   private readonly _skip = signal(0);
+  private readonly _saveStatus = signal<SaveStatus>('idle');
+  private readonly _saveError = signal<string | null>(null);
 
   readonly pageSize = 10;
 
@@ -37,9 +40,12 @@ export class UsersStore {
   readonly filters = this._filters.asReadonly();
   readonly total = this._total.asReadonly();
   readonly skip = this._skip.asReadonly();
+  readonly saveStatus = this._saveStatus.asReadonly();
+  readonly saveError = this._saveError.asReadonly();
 
   readonly isLoading = computed(() => this._status() === 'loading');
   readonly hasError = computed(() => this._status() === 'error');
+  readonly isSaving = computed(() => this._saveStatus() === 'saving');
 
   /**
    * Role and active filters are applied client-side because DummyJSON
@@ -73,6 +79,7 @@ export class UsersStore {
     request$.subscribe({
       next: (result) => {
         this._users.set(result.users);
+        console.log('Store Users', this._users());
         this._total.set(result.total);
         this._status.set('success');
       },
@@ -102,5 +109,29 @@ export class UsersStore {
     // Optimistically remove from local list; DummyJSON does not persist.
     this._users.update((users) => users.filter((u) => u.id !== id));
     this.api.deleteUser(id).subscribe();
+  }
+
+  createUser(payload: CreateUserPayload): void {
+    this._saveStatus.set('saving');
+    this._saveError.set(null);
+
+    this.api.createUser(payload).subscribe({
+      next: (user) => {
+        // DummyJSON does not persist — prepend optimistically to local list.
+        this._users.update((list) => [user, ...list]);
+        this._total.update((t) => t + 1);
+        this._saveStatus.set('saved');
+      },
+      error: (err: Error) => {
+        this._saveError.set(err.message);
+        this._saveStatus.set('error');
+      },
+    });
+  }
+
+  /** Reset save state when leaving the form page to avoid stale signals. */
+  resetSaveStatus(): void {
+    this._saveStatus.set('idle');
+    this._saveError.set(null);
   }
 }
