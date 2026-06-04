@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
@@ -34,6 +34,8 @@ export class UsersTableComponent {
   protected readonly store = inject(UsersStore);
   private readonly router = inject(Router);
 
+  readonly deleteRequest = output<User>();
+
   readonly displayedColumns = [
     'name',
     'username',
@@ -57,6 +59,6 @@ export class UsersTableComponent {
   }
 
   onDelete(user: User): void {
-    this.store.deleteUser(user.id);
+    this.deleteRequest.emit(user);
   }
 }

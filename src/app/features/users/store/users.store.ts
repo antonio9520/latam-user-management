@@ -6,6 +6,7 @@ import { UserFilters } from '../models/user-filter.model';
 
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+type DeleteStatus = 'idle' | 'deleting' | 'deleted' | 'error';
 
 /**
  * Signal-based store for the users feature.
@@ -34,6 +35,8 @@ export class UsersStore {
   private readonly _selectedUser = signal<User | null>(null);
   private readonly _selectedStatus = signal<LoadStatus>('idle');
   private readonly _selectedError = signal<string | null>(null);
+  private readonly _deleteStatus = signal<DeleteStatus>('idle');
+  private readonly _deleteError = signal<string | null>(null);
 
   readonly pageSize = 10;
 
@@ -48,10 +51,13 @@ export class UsersStore {
   readonly selectedUser = this._selectedUser.asReadonly();
   readonly selectedStatus = this._selectedStatus.asReadonly();
   readonly selectedError = this._selectedError.asReadonly();
+  readonly deleteStatus = this._deleteStatus.asReadonly();
+  readonly deleteError = this._deleteError.asReadonly();
 
   readonly isLoading = computed(() => this._status() === 'loading');
   readonly hasError = computed(() => this._status() === 'error');
   readonly isSaving = computed(() => this._saveStatus() === 'saving');
+  readonly isDeleting = computed(() => this._deleteStatus() === 'deleting');
   readonly isLoadingSelected = computed(() => this._selectedStatus() === 'loading');
   readonly selectedNotFound = computed(() => this._selectedStatus() === 'error');
 
@@ -114,9 +120,35 @@ export class UsersStore {
   }
 
   deleteUser(id: number): void {
-    // Optimistically remove from local list; DummyJSON does not persist.
+    // Snapshot the user before removing so we can roll back on error.
+    const snapshot = this._users().find((u) => u.id === id) ?? null;
+
+    this._deleteStatus.set('deleting');
+    this._deleteError.set(null);
+
+    // Optimistic removal.
     this._users.update((users) => users.filter((u) => u.id !== id));
-    this.api.deleteUser(id).subscribe();
+
+    this.api.deleteUser(id).subscribe({
+      next: () => {
+        // DummyJSON does not persist — keep the local removal.
+        this._total.update((t) => Math.max(0, t - 1));
+        this._deleteStatus.set('deleted');
+      },
+      error: (err: Error) => {
+        // Rollback: restore the user at its original position.
+        if (snapshot) {
+          this._users.update((users) => {
+            const index = users.findIndex((u) => u.id > snapshot.id);
+            const copy = [...users];
+            copy.splice(index === -1 ? copy.length : index, 0, snapshot);
+            return copy;
+          });
+        }
+        this._deleteError.set(err.message);
+        this._deleteStatus.set('error');
+      },
+    });
   }
 
   createUser(payload: CreateUserPayload): void {
@@ -141,6 +173,12 @@ export class UsersStore {
   resetSaveStatus(): void {
     this._saveStatus.set('idle');
     this._saveError.set(null);
+  }
+
+  /** Reset delete state after snackbar has been shown. */
+  resetDeleteStatus(): void {
+    this._deleteStatus.set('idle');
+    this._deleteError.set(null);
   }
 
   loadUserById(id: number): void {
