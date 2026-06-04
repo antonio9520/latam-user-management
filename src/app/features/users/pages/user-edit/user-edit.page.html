@@ -1,0 +1,30 @@
+<div class="flex flex-col gap-6">
+  <!-- Page header -->
+  <div>
+    <h1 class="text-2xl font-semibold text-gray-900">Edit user</h1>
+    <p class="mt-1 text-sm text-gray-500">Update the details for this user.</p>
+  </div>
+
+  @if (store.isLoadingSelected()) {
+    <!-- Loading state -->
+    <div class="flex items-center justify-center py-20" role="status" aria-label="Loading user">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (store.selectedNotFound()) {
+    <!-- Error / not found state -->
+    <div class="flex flex-col items-center gap-4 py-20 text-center px-4">
+      <mat-icon class="text-5xl" style="color: var(--mat-sys-error)">error_outline</mat-icon>
+      <p class="text-base text-gray-700">{{ store.selectedError() }}</p>
+    </div>
+  } @else if (store.selectedUser()) {
+    <!-- Form card — rendered only once user is loaded -->
+    <div class="rounded-lg border border-gray-200 bg-white p-6">
+      <app-user-form
+        [initialValue]="store.selectedUser()!"
+        [isSaving]="store.isSaving()"
+        (submitForm)="onSubmit($event)"
+        (cancelForm)="onCancel()"
+      />
+    </div>
+  }
+</div>

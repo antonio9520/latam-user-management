@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 
 import { UsersApiService } from '../services/users-api.service';
-import { User, CreateUserPayload } from '../models/user.model';
+import { User, CreateUserPayload, UpdateUserPayload } from '../models/user.model';
 import { UserFilters } from '../models/user-filter.model';
 
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -31,6 +31,9 @@ export class UsersStore {
   private readonly _skip = signal(0);
   private readonly _saveStatus = signal<SaveStatus>('idle');
   private readonly _saveError = signal<string | null>(null);
+  private readonly _selectedUser = signal<User | null>(null);
+  private readonly _selectedStatus = signal<LoadStatus>('idle');
+  private readonly _selectedError = signal<string | null>(null);
 
   readonly pageSize = 10;
 
@@ -42,10 +45,15 @@ export class UsersStore {
   readonly skip = this._skip.asReadonly();
   readonly saveStatus = this._saveStatus.asReadonly();
   readonly saveError = this._saveError.asReadonly();
+  readonly selectedUser = this._selectedUser.asReadonly();
+  readonly selectedStatus = this._selectedStatus.asReadonly();
+  readonly selectedError = this._selectedError.asReadonly();
 
   readonly isLoading = computed(() => this._status() === 'loading');
   readonly hasError = computed(() => this._status() === 'error');
   readonly isSaving = computed(() => this._saveStatus() === 'saving');
+  readonly isLoadingSelected = computed(() => this._selectedStatus() === 'loading');
+  readonly selectedNotFound = computed(() => this._selectedStatus() === 'error');
 
   /**
    * Role and active filters are applied client-side because DummyJSON
@@ -133,5 +141,47 @@ export class UsersStore {
   resetSaveStatus(): void {
     this._saveStatus.set('idle');
     this._saveError.set(null);
+  }
+
+  loadUserById(id: number): void {
+    this._selectedStatus.set('loading');
+    this._selectedError.set(null);
+    this._selectedUser.set(null);
+
+    this.api.getUserById(id).subscribe({
+      next: (user) => {
+        this._selectedUser.set(user);
+        this._selectedStatus.set('success');
+      },
+      error: (err: Error) => {
+        this._selectedError.set(err.message);
+        this._selectedStatus.set('error');
+      },
+    });
+  }
+
+  updateUser(id: number, payload: UpdateUserPayload): void {
+    this._saveStatus.set('saving');
+    this._saveError.set(null);
+
+    this.api.updateUser(id, payload).subscribe({
+      next: (updated) => {
+        // DummyJSON does not persist — replace optimistically in local list.
+        this._users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
+        this._selectedUser.set(updated);
+        this._saveStatus.set('saved');
+      },
+      error: (err: Error) => {
+        this._saveError.set(err.message);
+        this._saveStatus.set('error');
+      },
+    });
+  }
+
+  /** Reset selected-user state when leaving the edit page. */
+  resetSelectedUser(): void {
+    this._selectedUser.set(null);
+    this._selectedStatus.set('idle');
+    this._selectedError.set(null);
   }
 }
