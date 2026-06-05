@@ -1,17 +1,9 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-const API_BASE_URL = 'https://dummyjson.com';
-
-/**
- * Prepends the DummyJSON base URL to every outgoing request
- * and normalizes HTTP errors into a plain Error with a readable message.
- *
- * Using a functional interceptor (Angular 15+) keeps this stateless
- * and avoids the need for an injectable class.
- */
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-  const apiReq = req.clone({ url: `${API_BASE_URL}${req.url}` });
+  const apiReq = req.clone({ url: `${environment.apiBaseUrl}${req.url}` });
 
   return next(apiReq).pipe(
     catchError((error: HttpErrorResponse) => {

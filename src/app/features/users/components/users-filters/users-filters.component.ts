@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { UsersStore } from '../../store/users.store';
+import { UserFilters } from '../../models/user-filter.model';
 import { UserRole } from '../../models/user-role.type';
 
 @Component({
@@ -21,6 +22,8 @@ export class UsersFiltersComponent {
   protected readonly store = inject(UsersStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchSubject = new Subject<string>();
+
+  readonly filtersChange = output<Partial<UserFilters>>();
 
   readonly roleOptions: { value: UserRole | ''; label: string }[] = [
     { value: '', label: 'All roles' },
@@ -36,10 +39,10 @@ export class UsersFiltersComponent {
   ];
 
   constructor() {
-    // Debounce search input so every keystroke does not fire an HTTP request.
+    // Debounce search so every keystroke does not fire an HTTP request.
     this.searchSubject
       .pipe(debounceTime(350), takeUntilDestroyed(this.destroyRef))
-      .subscribe((query) => this.store.setFilters({ search: query }));
+      .subscribe((query) => this.filtersChange.emit({ search: query }));
   }
 
   onSearchInput(value: string): void {
@@ -47,11 +50,11 @@ export class UsersFiltersComponent {
   }
 
   onRoleChange(value: UserRole | ''): void {
-    this.store.setFilters({ role: value || undefined });
+    this.filtersChange.emit({ role: value || undefined });
   }
 
   onActiveChange(value: 'true' | 'false' | ''): void {
     const active = value === '' ? undefined : value === 'true';
-    this.store.setFilters({ active });
+    this.filtersChange.emit({ active });
   }
 }

@@ -10,14 +10,19 @@ type DeleteStatus = 'idle' | 'deleting' | 'deleted' | 'error';
 
 /**
  * Signal-based store for the users feature.
- * Provided at the route level so its lifetime is tied to the feature.
+ * Provided at the route level so its lifetime is scoped to the feature.
  *
  * Responsibilities:
- *  - Own all async state (users, pagination, status, error).
- *  - Apply client-side role/active filters (DummyJSON does not support them).
- *  - Delegate HTTP calls to UsersApiService.
+ *  - Own the feature state and expose reactive signals to the UI.
+ *  - Manage loading, error and mutation states.
+ *  - Coordinate filtering, searching and pagination.
+ *  - Keep URL query parameters and store state synchronized.
+ *  - Delegate all data access concerns to UsersApiService.
  *
- * Components must NOT call UsersApiService directly.
+ * Notes:
+ *  - Search is implemented client-side due to json-server limitations.
+ *  - Filters are applied through API query parameters whenever possible.
+ *  - Components must never access UsersApiService directly.
  */
 @Injectable()
 export class UsersStore {
@@ -61,10 +66,6 @@ export class UsersStore {
   readonly isLoadingSelected = computed(() => this._selectedStatus() === 'loading');
   readonly selectedNotFound = computed(() => this._selectedStatus() === 'error');
 
-  /**
-   * Role and active filters are applied client-side because DummyJSON
-   * does not expose those query parameters. Search is server-side.
-   */
   readonly filteredUsers = computed(() => {
     const { role, active } = this._filters();
     return this._users().filter((user) => {
@@ -85,7 +86,12 @@ export class UsersStore {
     this._status.set('loading');
     this._error.set(null);
 
-    const params = { limit: this.pageSize, skip: this._skip() };
+    const params = {
+      limit: this.pageSize,
+      skip: this._skip(),
+      role: filters.role,
+      status: filters.active !== undefined ? (filters.active ? 'active' : 'inactive') : 'all',
+    };
     const request$ = filters.search
       ? this.api.searchUsers(filters.search, params)
       : this.api.getUsers(params);
@@ -105,18 +111,30 @@ export class UsersStore {
   }
 
   /**
-   * Updates one or more filter values and reloads from page 0.
-   * Resets skip so pagination always returns to page 1 on filter change.
+   * Hydrates store state from URL query params and triggers the first load.
+   * Call once in ngOnInit of the list page after reading the route snapshot.
+   */
+  initFromParams(params: { skip: number; filters: UserFilters }): void {
+    this._skip.set(params.skip);
+    this._filters.set(params.filters);
+    this.loadUsers();
+  }
+
+  /**
+   * Updates one or more filter values WITHOUT triggering a load.
+   * The container is responsible for calling loadUsers() after updating the URL.
    */
   setFilters(partial: Partial<UserFilters>): void {
     this._filters.update((current) => ({ ...current, ...partial }));
     this._skip.set(0);
-    this.loadUsers();
   }
 
+  /**
+   * Updates the skip offset WITHOUT triggering a load.
+   * The container is responsible for calling loadUsers() after updating the URL.
+   */
   setPage(skip: number): void {
     this._skip.set(skip);
-    this.loadUsers();
   }
 
   deleteUser(id: number): void {

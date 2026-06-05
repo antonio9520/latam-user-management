@@ -36,6 +36,8 @@ export class UsersTableComponent {
 
   readonly deleteRequest = output<User>();
 
+  readonly pageChange = output<number>();
+
   readonly displayedColumns = [
     'name',
     'username',
@@ -47,11 +49,7 @@ export class UsersTableComponent {
   ];
 
   onPageChange(event: PageEvent): void {
-    this.store.setPage(event.pageIndex * this.store.pageSize);
-  }
-
-  onView(user: User): void {
-    this.router.navigate(['/users', user.id]);
+    this.pageChange.emit(event.pageIndex);
   }
 
   onEdit(user: User): void {

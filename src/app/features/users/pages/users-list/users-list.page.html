@@ -11,6 +11,6 @@
     </button>
   </div>
 
-  <app-users-filters />
-  <app-users-table (deleteRequest)="onDeleteRequest($event)" />
+  <app-users-filters (filtersChange)="onFiltersChange($event)" />
+  <app-users-table (deleteRequest)="onDeleteRequest($event)" (pageChange)="onPageChange($event)" />
 </div>

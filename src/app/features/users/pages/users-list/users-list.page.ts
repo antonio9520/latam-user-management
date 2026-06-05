@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,8 @@ import { UsersStore } from '../../store/users.store';
 import { UsersFiltersComponent } from '../../components/users-filters/users-filters.component';
 import { UsersTableComponent } from '../../components/users-table/users-table.component';
 import { User } from '../../models/user.model';
+import { UserFilters } from '../../models/user-filter.model';
+import { UserRole } from '../../models/user-role.type';
 import {
   ConfirmDialogComponent,
   ConfirmDialogData,
@@ -23,6 +25,8 @@ import {
 })
 export class UsersListPage implements OnInit {
   protected readonly store = inject(UsersStore);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -42,6 +46,47 @@ export class UsersListPage implements OnInit {
   }
 
   ngOnInit(): void {
+    const qp = this.route.snapshot.queryParams;
+
+    const page = Math.max(1, Number(qp['page']) || 1);
+    const search: string = qp['search'] ?? '';
+    const role = (qp['role'] as UserRole) || undefined;
+    const active = qp['active'] === undefined ? undefined : qp['active'] === 'true';
+
+    this.store.initFromParams({
+      skip: (page - 1) * this.store.pageSize,
+      filters: { search, role, active },
+    });
+  }
+
+  onPageChange(pageIndex: number): void {
+    const page = pageIndex + 1;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page },
+      queryParamsHandling: 'merge',
+    });
+    this.store.setPage((page - 1) * this.store.pageSize);
+    this.store.loadUsers();
+  }
+
+  onFiltersChange(partial: Partial<UserFilters>): void {
+    // Merge the incoming partial with the current store filters so a role
+    // change does not wipe out the current search value and vice-versa.
+    const current = this.store.filters();
+    const merged: UserFilters = { ...current, ...partial };
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        page: 1,
+        search: merged.search || null,
+        role: merged.role ?? null,
+        active: merged.active === undefined ? null : String(merged.active),
+      },
+      queryParamsHandling: 'merge',
+    });
+    this.store.setFilters(partial);
     this.store.loadUsers();
   }
 
