@@ -216,9 +216,6 @@ export class UsersStore {
   /**
    * Deactivates a user by setting active=false via PATCH.
    * Uses dedicated status signals to avoid interfering with save/delete flows.
-   *
-   * Challenge compliance: destructive actions (deactivate, delete) require
-   * explicit confirmation before execution.
    */
   deactivateUser(id: string): void {
     this._deactivateStatus.set('deactivating');
@@ -291,8 +288,6 @@ export class UsersStore {
 
     this.repo.updateUser(id, payload).subscribe({
       next: (updated) => {
-        // json-server persists the updated user in the mock database.
-        // Replace it locally to keep the UI in sync.
         this._users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
         this._selectedUser.set(updated);
         this._saveStatus.set('saved');
