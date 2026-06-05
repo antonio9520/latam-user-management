@@ -52,6 +52,10 @@ export class UsersTableComponent {
     this.pageChange.emit(event.pageIndex);
   }
 
+  onView(user: User): void {
+    this.router.navigate(['/users', user.id]);
+  }
+
   onEdit(user: User): void {
     this.router.navigate(['/users', user.id, 'edit']);
   }

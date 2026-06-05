@@ -30,6 +30,11 @@ export const usersRoutes: Routes = [
         loadComponent: () => import('./pages/user-form/user-form.page').then((m) => m.UserFormPage),
       },
       {
+        path: ':id',
+        loadComponent: () =>
+          import('./pages/user-detail/user-detail.page').then((m) => m.UserDetailPage),
+      },
+      {
         path: ':id/edit',
         loadComponent: () => import('./pages/user-edit/user-edit.page').then((m) => m.UserEditPage),
       },

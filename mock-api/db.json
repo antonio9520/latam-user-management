@@ -12,26 +12,13 @@
       "updatedAt": "2024-05-20T10:30:00.000Z"
     },
     {
-      "id": "2",
       "username": "noahk",
       "email": "noah.kim@example.com",
-      "firstName": "Noah",
+      "firstName": "Noah 12",
       "lastName": "Kim",
-      "role": "user",
       "active": true,
-      "createdAt": "2024-01-18T13:40:00.000Z",
-      "updatedAt": "2024-05-22T11:10:00.000Z"
-    },
-    {
-      "id": "3",
-      "username": "avat",
-      "email": "ava.turner@example.com",
-      "firstName": "Ava",
-      "lastName": "Turner",
-      "role": "guest",
-      "active": false,
-      "createdAt": "2024-02-03T08:20:00.000Z",
-      "updatedAt": "2024-05-25T16:45:00.000Z"
+      "role": "user",
+      "id": "2"
     },
     {
       "id": "4",
@@ -133,15 +120,13 @@
       "updatedAt": "2024-06-01T13:00:00.000Z"
     },
     {
-      "id": "13",
       "username": "lunad",
       "email": "luna.davis@example.com",
-      "firstName": "Luna",
+      "firstName": "Luna 4",
       "lastName": "Davis",
-      "role": "admin",
       "active": true,
-      "createdAt": "2024-05-05T12:30:00.000Z",
-      "updatedAt": "2024-06-03T09:15:00.000Z"
+      "role": "admin",
+      "id": "13"
     },
     {
       "id": "14",
@@ -177,15 +162,13 @@
       "updatedAt": "2024-06-01T11:00:00.000Z"
     },
     {
-      "id": "17",
       "username": "gracen",
       "email": "grace.nelson@example.com",
-      "firstName": "Grace",
+      "firstName": "Grace 2",
       "lastName": "Nelson",
-      "role": "admin",
       "active": false,
-      "createdAt": "2024-05-17T09:00:00.000Z",
-      "updatedAt": "2024-05-29T08:20:00.000Z"
+      "role": "admin",
+      "id": "17"
     },
     {
       "id": "18",
@@ -439,6 +422,15 @@
       "active": true,
       "createdAt": "2024-05-15T16:20:00.000Z",
       "updatedAt": "2024-06-04T12:00:00.000Z"
+    },
+    {
+      "username": "abrvc95@gmail.com",
+      "email": "abrvc95@gmail.com",
+      "firstName": "Abraham",
+      "lastName": "vidal",
+      "active": true,
+      "role": "user",
+      "id": "k71_d93XI4w"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

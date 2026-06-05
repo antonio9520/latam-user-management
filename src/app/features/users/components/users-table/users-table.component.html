@@ -71,6 +71,14 @@
         <mat-cell *matCellDef="let user">
           <button
             mat-icon-button
+            (click)="onView(user)"
+            [attr.aria-label]="'View details for ' + user.firstName + ' ' + user.lastName"
+            matTooltip="View details"
+          >
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button
+            mat-icon-button
             (click)="onEdit(user)"
             [attr.aria-label]="'Edit ' + user.firstName + ' ' + user.lastName"
             matTooltip="Edit"

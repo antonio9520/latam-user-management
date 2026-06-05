@@ -1,0 +1,128 @@
+<div class="container mx-auto max-w-4xl p-6">
+  <!-- Back button -->
+  <div class="mb-6">
+    <button mat-stroked-button (click)="goBack()" aria-label="Back to users list">
+      <mat-icon>arrow_back</mat-icon>
+      Back to users
+    </button>
+  </div>
+
+  <!-- Invalid ID state -->
+  @if (invalidId) {
+    <div class="flex flex-col items-center gap-4 py-20 text-center px-4">
+      <mat-icon class="text-5xl text-gray-400">error_outline</mat-icon>
+      <p class="text-lg text-gray-700">Invalid user ID.</p>
+      <button mat-stroked-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to users
+      </button>
+    </div>
+
+    <!-- Loading state -->
+  } @else if (store.isLoadingSelected()) {
+    <div class="flex items-center justify-center py-20" role="status" aria-label="Loading user">
+      <mat-spinner diameter="48" />
+    </div>
+
+    <!-- Not found state -->
+  } @else if (store.selectedNotFound()) {
+    <div class="flex flex-col items-center gap-4 py-20 text-center px-4">
+      <mat-icon class="text-5xl text-gray-400">person_off</mat-icon>
+      <p class="text-lg text-gray-700">User not found.</p>
+      <button mat-stroked-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to users
+      </button>
+    </div>
+
+    <!-- User detail -->
+  } @else if (store.selectedUser(); as user) {
+    <div class="flex flex-col gap-6">
+      <!-- Header card -->
+      <mat-card>
+        <mat-card-content class="p-6">
+          <div class="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h1 class="text-2xl font-semibold">{{ user.firstName }} {{ user.lastName }}</h1>
+              <p class="text-gray-500 mt-1">@{{ user.username }}</p>
+              <div class="flex items-center gap-2 mt-3">
+                <app-user-status-badge [active]="user.active" />
+                <app-user-role-badge [role]="user.role" />
+              </div>
+            </div>
+            <button
+              mat-flat-button
+              color="primary"
+              (click)="goToEdit()"
+              [attr.aria-label]="'Edit ' + user.firstName + ' ' + user.lastName"
+            >
+              <mat-icon>edit</mat-icon>
+              Edit user
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Detail grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Personal information -->
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Personal information</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="px-6 pb-6 pt-2">
+            <dl class="flex flex-col gap-4">
+              <div>
+                <dt class="text-sm text-gray-500">First name</dt>
+                <dd class="font-medium">{{ user.firstName }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Last name</dt>
+                <dd class="font-medium">{{ user.lastName }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Email</dt>
+                <dd class="font-medium">{{ user.email }}</dd>
+              </div>
+            </dl>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Account details -->
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Account details</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="px-6 pb-6 pt-2">
+            <dl class="flex flex-col gap-4">
+              <div>
+                <dt class="text-sm text-gray-500">Username</dt>
+                <dd class="font-medium">@{{ user.username }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Role</dt>
+                <dd><app-user-role-badge [role]="user.role" /></dd>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Status</dt>
+                <dd><app-user-status-badge [active]="user.active" /></dd>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Created</dt>
+                <dd class="font-medium">
+                  {{ user.createdAt ? (user.createdAt | date: 'mediumDate') : '—' }}
+                </dd>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Last updated</dt>
+                <dd class="font-medium">
+                  {{ user.updatedAt ? (user.updatedAt | date: 'mediumDate') : '—' }}
+                </dd>
+              </div>
+            </dl>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  }
+</div>
