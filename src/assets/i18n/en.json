@@ -1,0 +1,12 @@
+{
+  "app": {
+    "title": "User Management"
+  },
+  "users": {
+    "title": "User Management",
+    "search": "Search users",
+    "role": "Role",
+    "status": "Status",
+    "create": "Create User"
+  }
+}

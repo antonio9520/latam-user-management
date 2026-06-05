@@ -1,0 +1,31 @@
+<header class="main-header">
+  <div class="header-inner">
+    <div class="flex items-center gap-3">
+      <mat-icon aria-hidden="true">manage_accounts</mat-icon>
+      <span class="header-title">User Management</span>
+    </div>
+
+    <nav class="lang-switcher" aria-label="Language selector">
+      @for (lang of supportedLangs; track lang) {
+        <button
+          class="lang-btn"
+          [class.lang-btn--active]="activeLang() === lang"
+          [class.lang-btn--disabled]="true"
+          (click)="setLanguage(lang)"
+          [matTooltip]="lang === 'en' ? 'English' : 'Español'"
+          [attr.aria-pressed]="activeLang() === lang"
+          [attr.aria-label]="lang === 'en' ? 'Switch to English' : 'Cambiar a Español'"
+          [disabled]="true"
+        >
+          {{ lang.toUpperCase() }}
+        </button>
+      }
+    </nav>
+  </div>
+</header>
+
+<main id="main-content">
+  <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <router-outlet />
+  </div>
+</main>

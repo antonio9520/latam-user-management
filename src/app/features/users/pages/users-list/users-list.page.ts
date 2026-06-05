@@ -16,12 +16,20 @@ import {
   ConfirmDialogData,
 } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DEACTIVATE_USER_DIALOG } from '../../utils/deactivate-dialog.config';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-users-list-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MatButtonModule, MatIconModule, UsersFiltersComponent, UsersTableComponent],
+  imports: [
+    RouterLink,
+    MatButtonModule,
+    MatIconModule,
+    UsersFiltersComponent,
+    UsersTableComponent,
+    TranslatePipe,
+  ],
   templateUrl: './users-list.page.html',
 })
 export class UsersListPage implements OnInit {
