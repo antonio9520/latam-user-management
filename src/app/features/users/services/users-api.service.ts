@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
-
+import { map, Observable, delay } from 'rxjs';
 import { User } from '../models/user.model';
 
 export interface PaginatedUsers {
@@ -54,6 +53,7 @@ export class UsersApiService {
     return this.http
       .get<UserListResponse>('/users', { params: httpParams, observe: 'response' })
       .pipe(
+        delay(2000),
         map((res) => {
           console.log('Raw API response:', res);
           return {
@@ -90,6 +90,7 @@ export class UsersApiService {
     }
 
     return this.http.get<User[]>('/users', { params: httpParams, observe: 'response' }).pipe(
+      delay(2000),
       map((res) => {
         const users = res.body ?? [];
         const normalizedQuery = query.trim().toLowerCase();

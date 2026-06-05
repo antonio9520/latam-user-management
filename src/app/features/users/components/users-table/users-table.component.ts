@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 import { UsersStore } from '../../store/users.store';
@@ -25,7 +24,6 @@ import { UserRoleBadgeComponent } from '../user-role-badge/user-role-badge.compo
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
-    MatProgressSpinnerModule,
     MatPaginatorModule,
     UserStatusBadgeComponent,
     UserRoleBadgeComponent,
@@ -36,6 +34,8 @@ import { UserRoleBadgeComponent } from '../user-role-badge/user-role-badge.compo
 export class UsersTableComponent {
   protected readonly store = inject(UsersStore);
   private readonly router = inject(Router);
+
+  protected readonly skeletonRows = Array(7);
 
   readonly deleteRequest = output<User>();
   readonly deactivateRequest = output<User>();
