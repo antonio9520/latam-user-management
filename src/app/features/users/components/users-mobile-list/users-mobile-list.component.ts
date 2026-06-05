@@ -1,62 +1,45 @@
-import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { UsersStore } from '../../store/users.store';
 import { User } from '../../models/user.model';
-import { UserStatusBadgeComponent } from '../user-status-badge/user-status-badge.component';
 import { UserRoleBadgeComponent } from '../user-role-badge/user-role-badge.component';
-import { UsersMobileListComponent } from '../users-mobile-list/users-mobile-list.component';
+import { UserStatusBadgeComponent } from '../user-status-badge/user-status-badge.component';
 
 @Component({
-  selector: 'app-users-table',
+  selector: 'app-users-mobile-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,
-    MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatTooltipModule,
     MatPaginatorModule,
-    UserStatusBadgeComponent,
+    MatTooltipModule,
     UserRoleBadgeComponent,
-    UsersMobileListComponent,
+    UserStatusBadgeComponent,
   ],
-  templateUrl: './users-table.component.html',
-  styleUrl: './users-table.component.scss',
+  templateUrl: './users-mobile-list.component.html',
+  styleUrl: './users-mobile-list.component.css',
 })
-export class UsersTableComponent {
-  protected readonly store = inject(UsersStore);
+export class UsersMobileListComponent {
   private readonly router = inject(Router);
 
-  protected readonly skeletonRows = Array(7);
+  readonly users = input.required<User[]>();
+  readonly total = input.required<number>();
+  readonly pageSize = input.required<number>();
+  readonly skip = input.required<number>();
 
   readonly deleteRequest = output<User>();
   readonly deactivateRequest = output<User>();
   readonly activateRequest = output<User>();
   readonly pageChange = output<number>();
-
-  readonly displayedColumns = [
-    'name',
-    'username',
-    'email',
-    'role',
-    'status',
-    'createdAt',
-    'actions',
-  ];
-
-  onPageChange(event: PageEvent): void {
-    this.pageChange.emit(event.pageIndex);
-  }
 
   onView(user: User): void {
     this.router.navigate(['/users', user.id]);
@@ -76,5 +59,9 @@ export class UsersTableComponent {
 
   onActivate(user: User): void {
     this.activateRequest.emit(user);
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageChange.emit(event.pageIndex);
   }
 }
