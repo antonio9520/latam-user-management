@@ -1,3 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+/* Angular Material custom fields */
+
+.custom-field .mat-mdc-text-field-wrapper {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.custom-field .mdc-notched-outline__leading,
+.custom-field .mdc-notched-outline__notch,
+.custom-field .mdc-notched-outline__trailing {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.custom-field:hover .mdc-notched-outline__leading,
+.custom-field:hover .mdc-notched-outline__notch,
+.custom-field:hover .mdc-notched-outline__trailing {
+  border-color: rgba(255, 255, 255, 0.2);
+}

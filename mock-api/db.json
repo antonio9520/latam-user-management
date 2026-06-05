@@ -18,7 +18,9 @@
       "lastName": "Kim",
       "active": true,
       "role": "user",
-      "id": "2"
+      "id": "2",
+      "createdAt": "2024-01-10T09:15:00.000Z",
+      "updatedAt": "2024-05-20T10:30:00.000Z"
     },
     {
       "id": "4",
@@ -49,7 +51,9 @@
       "lastName": "Miller",
       "active": true,
       "role": "user",
-      "id": "6"
+      "id": "6",
+      "createdAt": "2024-01-10T09:15:00.000Z",
+      "updatedAt": "2024-05-20T10:30:00.000Z"
     },
     {
       "id": "7",
@@ -124,7 +128,9 @@
       "lastName": "Davis",
       "active": true,
       "role": "admin",
-      "id": "13"
+      "id": "13",
+      "createdAt": "2024-01-10T09:15:00.000Z",
+      "updatedAt": "2024-05-20T10:30:00.000Z"
     },
     {
       "id": "14",
@@ -166,7 +172,9 @@
       "lastName": "Nelson",
       "active": false,
       "role": "admin",
-      "id": "17"
+      "id": "17",
+      "createdAt": "2024-01-10T09:15:00.000Z",
+      "updatedAt": "2024-05-20T10:30:00.000Z"
     },
     {
       "id": "18",
@@ -428,7 +436,31 @@
       "lastName": "vidal",
       "active": true,
       "role": "user",
-      "id": "k71_d93XI4w"
+      "id": "k71_d93XI4w",
+      "createdAt": "2024-01-10T09:15:00.000Z",
+      "updatedAt": "2024-05-20T10:30:00.000Z"
+    },
+    {
+      "username": "isaacv",
+      "email": "isaac@isaac.cl",
+      "firstName": "isaac 2",
+      "lastName": "vidal",
+      "active": true,
+      "role": "guest",
+      "id": "qFHPCNdCBkE",
+      "createdAt": "2026-06-05T06:20:08.794Z",
+      "updatedAt": "2026-06-05T06:20:55.446Z"
+    },
+    {
+      "username": "soniavidal",
+      "email": "sonia@vidal.cl",
+      "firstName": "sonia",
+      "lastName": "vidal",
+      "active": true,
+      "role": "user",
+      "createdAt": "2026-06-05T06:20:08.794Z",
+      "updatedAt": "2026-06-05T06:20:08.794Z",
+      "id": "mZDGCGtg4po"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

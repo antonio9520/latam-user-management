@@ -31,6 +31,7 @@ import { UserRoleBadgeComponent } from '../user-role-badge/user-role-badge.compo
     UserRoleBadgeComponent,
   ],
   templateUrl: './users-table.component.html',
+  styleUrl: './users-table.component.scss',
 })
 export class UsersTableComponent {
   protected readonly store = inject(UsersStore);

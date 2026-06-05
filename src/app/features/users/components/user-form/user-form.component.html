@@ -1,7 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
     <!-- First name -->
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="custom-field">
       <mat-label>First name</mat-label>
       <input matInput formControlName="firstName" placeholder="John" autocomplete="given-name" />
       @if (getError('firstName')) {
@@ -10,7 +10,7 @@
     </mat-form-field>
 
     <!-- Last name -->
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="custom-field">
       <mat-label>Last name</mat-label>
       <input matInput formControlName="lastName" placeholder="Doe" autocomplete="family-name" />
       @if (getError('lastName')) {
@@ -19,7 +19,7 @@
     </mat-form-field>
 
     <!-- Username -->
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="custom-field">
       <mat-label>Username</mat-label>
       <input matInput formControlName="username" placeholder="johndoe" autocomplete="username" />
       @if (getError('username')) {
@@ -28,7 +28,7 @@
     </mat-form-field>
 
     <!-- Email -->
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="custom-field">
       <mat-label>Email</mat-label>
       <input
         matInput
@@ -43,7 +43,7 @@
     </mat-form-field>
 
     <!-- Role -->
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="custom-field">
       <mat-label>Role</mat-label>
       <mat-select formControlName="role" aria-label="Role">
         @for (opt of roleOptions; track opt.value) {

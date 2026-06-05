@@ -1,0 +1,19 @@
+:host ::ng-deep .mat-mdc-table {
+  background: transparent;
+}
+
+:host ::ng-deep .mat-mdc-header-row {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+:host ::ng-deep .mat-mdc-header-cell {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+:host ::ng-deep .mat-mdc-cell {
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+:host ::ng-deep .mat-mdc-row:hover {
+  background-color: rgba(255, 255, 255, 0.035);
+}
