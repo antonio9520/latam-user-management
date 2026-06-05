@@ -1,13 +1,24 @@
 import { Routes } from '@angular/router';
 
 import { UsersStore } from './store/users.store';
+import { USERS_REPOSITORY } from './repository/users.repository';
+import { JsonServerUsersRepository } from './repository/json-server-users.repository';
 
 export const usersRoutes: Routes = [
   {
-    // Parent shell: provides UsersStore for all child routes so that both
-    // the list and the form page share the same store instance.
+    /**
+     * Users feature routes.
+     *
+     * The parent route provides the feature-level dependencies:
+     * - UsersStore: shared state for all Users pages.
+     * - USERS_REPOSITORY: repository implementation used by the store.
+     *
+     * By registering the repository here, the store depends on the abstraction
+     * instead of a concrete data source. Replacing json-server with another backend
+     * only requires changing this provider.
+     */
     path: '',
-    providers: [UsersStore],
+    providers: [UsersStore, { provide: USERS_REPOSITORY, useClass: JsonServerUsersRepository }],
     children: [
       {
         path: '',

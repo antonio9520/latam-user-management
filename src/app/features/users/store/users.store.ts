@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 
-import { UsersApiService } from '../services/users-api.service';
+import { USERS_REPOSITORY } from '../repository/users.repository';
 import { User, CreateUserPayload, UpdateUserPayload } from '../models/user.model';
 import { UserFilters } from '../models/user-filter.model';
 
@@ -12,21 +12,23 @@ type DeleteStatus = 'idle' | 'deleting' | 'deleted' | 'error';
  * Signal-based store for the users feature.
  * Provided at the route level so its lifetime is scoped to the feature.
  *
+ * Layer: Application / State
+ *
  * Responsibilities:
  *  - Own the feature state and expose reactive signals to the UI.
  *  - Manage loading, error and mutation states.
  *  - Coordinate filtering, searching and pagination.
  *  - Keep URL query parameters and store state synchronized.
- *  - Delegate all data access concerns to UsersApiService.
+ *  - Delegate data access operations to UsersRepository.
  *
- * Notes:
- *  - Search is implemented client-side due to json-server limitations.
- *  - Filters are applied through API query parameters whenever possible.
- *  - Components must never access UsersApiService directly.
+ * Boundaries:
+ *  - Components interact with this store, not with repositories or services.
+ *  - This store depends on the UsersRepository contract only.
+ *  - It must never import UsersApiService or any infrastructure detail.
  */
 @Injectable()
 export class UsersStore {
-  private readonly api = inject(UsersApiService);
+  private readonly repo = inject(USERS_REPOSITORY);
 
   // --- private writable state ---
   private readonly _users = signal<User[]>([]);
@@ -93,13 +95,12 @@ export class UsersStore {
       status: filters.active !== undefined ? (filters.active ? 'active' : 'inactive') : 'all',
     };
     const request$ = filters.search
-      ? this.api.searchUsers(filters.search, params)
-      : this.api.getUsers(params);
+      ? this.repo.searchUsers(filters.search, params)
+      : this.repo.getUsers(params);
 
     request$.subscribe({
       next: (result) => {
         this._users.set(result.users);
-        console.log('Store Users', this._users());
         this._total.set(result.total);
         this._status.set('success');
       },
@@ -147,9 +148,9 @@ export class UsersStore {
     // Optimistic removal.
     this._users.update((users) => users.filter((u) => u.id !== id));
 
-    this.api.deleteUser(id).subscribe({
+    this.repo.deleteUser(id).subscribe({
       next: () => {
-        // DummyJSON does not persist — keep the local removal.
+        // json-server persists changes in the mock database.
         this._total.update((t) => Math.max(0, t - 1));
         this._deleteStatus.set('deleted');
       },
@@ -173,9 +174,10 @@ export class UsersStore {
     this._saveStatus.set('saving');
     this._saveError.set(null);
 
-    this.api.createUser(payload).subscribe({
+    this.repo.createUser(payload).subscribe({
       next: (user) => {
-        // DummyJSON does not persist — prepend optimistically to local list.
+        // json-server persists the created user in the mock database.
+        // Prepend locally to keep the UI responsive.
         this._users.update((list) => [user, ...list]);
         this._total.update((t) => t + 1);
         this._saveStatus.set('saved');
@@ -204,7 +206,7 @@ export class UsersStore {
     this._selectedError.set(null);
     this._selectedUser.set(null);
 
-    this.api.getUserById(id).subscribe({
+    this.repo.getUserById(id).subscribe({
       next: (user) => {
         this._selectedUser.set(user);
         this._selectedStatus.set('success');
@@ -220,9 +222,10 @@ export class UsersStore {
     this._saveStatus.set('saving');
     this._saveError.set(null);
 
-    this.api.updateUser(id, payload).subscribe({
+    this.repo.updateUser(id, payload).subscribe({
       next: (updated) => {
-        // DummyJSON does not persist — replace optimistically in local list.
+        // json-server persists the updated user in the mock database.
+        // Replace it locally to keep the UI in sync.
         this._users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
         this._selectedUser.set(updated);
         this._saveStatus.set('saved');
