@@ -47,7 +47,7 @@
       "email": "lucas.miller@example.com",
       "firstName": "Lucas 2",
       "lastName": "Miller",
-      "active": false,
+      "active": true,
       "role": "user",
       "id": "6"
     },

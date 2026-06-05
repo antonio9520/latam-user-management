@@ -12,5 +12,10 @@
   </div>
 
   <app-users-filters (filtersChange)="onFiltersChange($event)" />
-  <app-users-table (deleteRequest)="onDeleteRequest($event)" (pageChange)="onPageChange($event)" />
+  <app-users-table
+    (deleteRequest)="onDeleteRequest($event)"
+    (deactivateRequest)="onDeactivateRequest($event)"
+    (activateRequest)="onActivateRequest($event)"
+    (pageChange)="onPageChange($event)"
+  />
 </div>

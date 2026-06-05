@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -22,6 +23,7 @@ import { UserRoleBadgeComponent } from '../user-role-badge/user-role-badge.compo
     MatTableModule,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
@@ -35,7 +37,8 @@ export class UsersTableComponent {
   private readonly router = inject(Router);
 
   readonly deleteRequest = output<User>();
-
+  readonly deactivateRequest = output<User>();
+  readonly activateRequest = output<User>();
   readonly pageChange = output<number>();
 
   readonly displayedColumns = [
@@ -62,5 +65,13 @@ export class UsersTableComponent {
 
   onDelete(user: User): void {
     this.deleteRequest.emit(user);
+  }
+
+  onDeactivate(user: User): void {
+    this.deactivateRequest.emit(user);
+  }
+
+  onActivate(user: User): void {
+    this.activateRequest.emit(user);
   }
 }

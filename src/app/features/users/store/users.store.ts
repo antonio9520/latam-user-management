@@ -7,6 +7,8 @@ import { UserFilters } from '../models/user-filter.model';
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type DeleteStatus = 'idle' | 'deleting' | 'deleted' | 'error';
+type DeactivateStatus = 'idle' | 'deactivating' | 'deactivated' | 'error';
+type ActivateStatus = 'idle' | 'activating' | 'activated' | 'error';
 
 /**
  * Signal-based store for the users feature.
@@ -44,6 +46,10 @@ export class UsersStore {
   private readonly _selectedError = signal<string | null>(null);
   private readonly _deleteStatus = signal<DeleteStatus>('idle');
   private readonly _deleteError = signal<string | null>(null);
+  private readonly _deactivateStatus = signal<DeactivateStatus>('idle');
+  private readonly _deactivateError = signal<string | null>(null);
+  private readonly _activateStatus = signal<ActivateStatus>('idle');
+  private readonly _activateError = signal<string | null>(null);
 
   readonly pageSize = 10;
 
@@ -60,11 +66,17 @@ export class UsersStore {
   readonly selectedError = this._selectedError.asReadonly();
   readonly deleteStatus = this._deleteStatus.asReadonly();
   readonly deleteError = this._deleteError.asReadonly();
+  readonly deactivateStatus = this._deactivateStatus.asReadonly();
+  readonly deactivateError = this._deactivateError.asReadonly();
+  readonly activateStatus = this._activateStatus.asReadonly();
+  readonly activateError = this._activateError.asReadonly();
 
   readonly isLoading = computed(() => this._status() === 'loading');
   readonly hasError = computed(() => this._status() === 'error');
   readonly isSaving = computed(() => this._saveStatus() === 'saving');
   readonly isDeleting = computed(() => this._deleteStatus() === 'deleting');
+  readonly isDeactivating = computed(() => this._deactivateStatus() === 'deactivating');
+  readonly isActivating = computed(() => this._activateStatus() === 'activating');
   readonly isLoadingSelected = computed(() => this._selectedStatus() === 'loading');
   readonly selectedNotFound = computed(() => this._selectedStatus() === 'error');
 
@@ -199,6 +211,61 @@ export class UsersStore {
   resetDeleteStatus(): void {
     this._deleteStatus.set('idle');
     this._deleteError.set(null);
+  }
+
+  /**
+   * Deactivates a user by setting active=false via PATCH.
+   * Uses dedicated status signals to avoid interfering with save/delete flows.
+   *
+   * Challenge compliance: destructive actions (deactivate, delete) require
+   * explicit confirmation before execution.
+   */
+  deactivateUser(id: number): void {
+    this._deactivateStatus.set('deactivating');
+    this._deactivateError.set(null);
+
+    this.repo.updateUser(id, { active: false }).subscribe({
+      next: (updated) => {
+        this._users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
+        this._deactivateStatus.set('deactivated');
+      },
+      error: (err: Error) => {
+        this._deactivateError.set(err.message);
+        this._deactivateStatus.set('error');
+      },
+    });
+  }
+
+  /** Reset deactivate state after snackbar has been shown. */
+  resetDeactivateStatus(): void {
+    this._deactivateStatus.set('idle');
+    this._deactivateError.set(null);
+  }
+
+  /** Activates a user by setting active=true via PATCH. */
+  activateUser(id: number): void {
+    this._activateStatus.set('activating');
+    this._activateError.set(null);
+
+    this.repo.updateUser(id, { active: true }).subscribe({
+      next: (updated) => {
+        this._users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
+        if (this._selectedUser()?.id === id) {
+          this._selectedUser.set(updated);
+        }
+        this._activateStatus.set('activated');
+      },
+      error: (err: Error) => {
+        this._activateError.set(err.message);
+        this._activateStatus.set('error');
+      },
+    });
+  }
+
+  /** Reset activate state after snackbar has been shown. */
+  resetActivateStatus(): void {
+    this._activateStatus.set('idle');
+    this._activateError.set(null);
   }
 
   loadUserById(id: number): void {

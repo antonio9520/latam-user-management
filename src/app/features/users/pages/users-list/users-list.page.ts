@@ -15,6 +15,7 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogData,
 } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DEACTIVATE_USER_DIALOG } from '../../utils/deactivate-dialog.config';
 
 @Component({
   selector: 'app-users-list-page',
@@ -41,6 +42,34 @@ export class UsersListPage implements OnInit {
           duration: 5000,
         });
         this.store.resetDeleteStatus();
+      }
+    });
+
+    effect(() => {
+      const status = this.store.deactivateStatus();
+      if (status === 'deactivated') {
+        this.snackBar.open('User deactivated successfully', 'Close', { duration: 3000 });
+        this.store.resetDeactivateStatus();
+      } else if (status === 'error') {
+        this.snackBar.open(
+          this.store.deactivateError() ?? 'An unexpected error occurred',
+          'Close',
+          { duration: 5000 },
+        );
+        this.store.resetDeactivateStatus();
+      }
+    });
+
+    effect(() => {
+      const status = this.store.activateStatus();
+      if (status === 'activated') {
+        this.snackBar.open('User activated successfully', 'Close', { duration: 3000 });
+        this.store.resetActivateStatus();
+      } else if (status === 'error') {
+        this.snackBar.open(this.store.activateError() ?? 'An unexpected error occurred', 'Close', {
+          duration: 5000,
+        });
+        this.store.resetActivateStatus();
       }
     });
   }
@@ -95,6 +124,7 @@ export class UsersListPage implements OnInit {
       title: 'Delete user',
       message: `Are you sure you want to delete @${user.username}? This action cannot be undone.`,
       confirmLabel: 'Delete',
+      // Default confirmColor 'warn' — most severe action.
     };
 
     this.dialog
@@ -105,5 +135,22 @@ export class UsersListPage implements OnInit {
           this.store.deleteUser(user.id);
         }
       });
+  }
+
+  onDeactivateRequest(user: User): void {
+    this.dialog
+      .open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+        data: DEACTIVATE_USER_DIALOG,
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.store.deactivateUser(user.id);
+        }
+      });
+  }
+
+  onActivateRequest(user: User): void {
+    this.store.activateUser(user.id);
   }
 }

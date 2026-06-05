@@ -6,5 +6,5 @@
 
 <mat-dialog-actions align="end">
   <button mat-stroked-button (click)="onCancel()">Cancel</button>
-  <button mat-raised-button color="warn" (click)="onConfirm()">{{ confirmLabel }}</button>
+  <button mat-raised-button [color]="confirmColor" (click)="onConfirm()">{{ confirmLabel }}</button>
 </mat-dialog-actions>

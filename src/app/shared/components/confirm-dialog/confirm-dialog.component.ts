@@ -6,6 +6,8 @@ export interface ConfirmDialogData {
   title: string;
   message: string;
   confirmLabel?: string;
+  /** Button color for the confirm action. Defaults to 'warn'. Use 'primary' for reversible actions. */
+  confirmColor?: 'primary' | 'accent' | 'warn';
 }
 
 @Component({
@@ -20,6 +22,7 @@ export class ConfirmDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<ConfirmDialogComponent>);
 
   protected readonly confirmLabel = this.data.confirmLabel ?? 'Confirm';
+  protected readonly confirmColor = this.data.confirmColor ?? 'warn';
 
   onCancel(): void {
     this.dialogRef.close(false);
