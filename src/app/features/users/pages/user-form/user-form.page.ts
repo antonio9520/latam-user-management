@@ -24,8 +24,13 @@ export class UserFormPage implements OnDestroy {
     effect(() => {
       const status = this.store.saveStatus();
       if (status === 'saved') {
+        const createdUser = this.store.selectedUser();
         this.snackBar.open('User created successfully', 'Close', { duration: 3000 });
-        this.router.navigate(['/users']);
+        if (createdUser) {
+          this.router.navigate(['/users', createdUser.id]);
+        } else {
+          this.router.navigate(['/users']);
+        }
       } else if (status === 'error') {
         this.snackBar.open(this.store.saveError() ?? 'An unexpected error occurred', 'Close', {
           duration: 5000,
@@ -35,8 +40,9 @@ export class UserFormPage implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Reset so a stale status does not re-trigger the effect on next visit.
+    // Reset so stale signals do not re-trigger effects on next visit.
     this.store.resetSaveStatus();
+    this.store.resetSelectedUser();
   }
 
   onSubmit(payload: CreateUserPayload): void {

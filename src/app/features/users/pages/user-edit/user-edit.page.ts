@@ -35,7 +35,7 @@ export class UserEditPage implements OnInit, OnDestroy {
       const status = this.store.saveStatus();
       if (status === 'saved') {
         this.snackBar.open('User updated successfully', 'Close', { duration: 3000 });
-        this.router.navigate(['/users']);
+        this.router.navigate(['/users', this.userId]);
       } else if (status === 'error') {
         this.snackBar.open(this.store.saveError() ?? 'An unexpected error occurred', 'Close', {
           duration: 5000,

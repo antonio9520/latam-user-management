@@ -177,8 +177,8 @@ export class UsersStore {
     this.repo.createUser(payload).subscribe({
       next: (user) => {
         // json-server persists the created user in the mock database.
-        // Prepend locally to keep the UI responsive.
-        this._users.update((list) => [user, ...list]);
+        // Expose the new user so the form page can navigate to its detail.
+        this._selectedUser.set(user);
         this._total.update((t) => t + 1);
         this._saveStatus.set('saved');
       },

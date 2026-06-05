@@ -127,7 +127,7 @@ export class UsersApiService {
   }
 
   updateUser(id: number, payload: Partial<Omit<User, 'id'>>): Observable<User> {
-    return this.http.put<User>(`/users/${id}`, payload);
+    return this.http.patch<User>(`/users/${id}`, payload);
   }
 
   /** json-server returns {} on DELETE; the store ignores the response body. */

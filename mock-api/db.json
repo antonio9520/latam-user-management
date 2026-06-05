@@ -4,9 +4,9 @@
       "id": "1",
       "username": "sophiar",
       "email": "sophia.rodriguez@example.com",
-      "firstName": "Sophia",
+      "firstName": "Sophia 2",
       "lastName": "Rodriguez",
-      "role": "admin",
+      "role": "user",
       "active": true,
       "createdAt": "2024-01-10T09:15:00.000Z",
       "updatedAt": "2024-05-20T10:30:00.000Z"
@@ -43,15 +43,13 @@
       "updatedAt": "2024-06-01T09:20:00.000Z"
     },
     {
-      "id": "6",
       "username": "lucasm",
       "email": "lucas.miller@example.com",
-      "firstName": "Lucas",
+      "firstName": "Lucas 2",
       "lastName": "Miller",
-      "role": "user",
       "active": false,
-      "createdAt": "2024-03-10T11:25:00.000Z",
-      "updatedAt": "2024-05-30T14:10:00.000Z"
+      "role": "user",
+      "id": "6"
     },
     {
       "id": "7",
@@ -262,7 +260,7 @@
       "id": "26",
       "username": "ethand",
       "email": "ethan.davis@example.com",
-      "firstName": "Ethan",
+      "firstName": "Ethan 4",
       "lastName": "Davis",
       "role": "user",
       "active": false,
