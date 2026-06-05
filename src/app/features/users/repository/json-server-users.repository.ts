@@ -28,7 +28,7 @@ export class JsonServerUsersRepository implements UsersRepository {
     return this.api.searchUsers(query, params);
   }
 
-  getUserById(id: number): Observable<User> {
+  getUserById(id: string): Observable<User> {
     return this.api.getUserById(id);
   }
 
@@ -36,11 +36,11 @@ export class JsonServerUsersRepository implements UsersRepository {
     return this.api.createUser(payload);
   }
 
-  updateUser(id: number, payload: UpdateUserPayload): Observable<User> {
+  updateUser(id: string, payload: UpdateUserPayload): Observable<User> {
     return this.api.updateUser(id, payload);
   }
 
-  deleteUser(id: number): Observable<unknown> {
+  deleteUser(id: string): Observable<unknown> {
     return this.api.deleteUser(id);
   }
 }

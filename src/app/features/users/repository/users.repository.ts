@@ -19,10 +19,10 @@ import { PaginatedUsers, UserListParams } from '../services/users-api.service';
 export interface UsersRepository {
   getUsers(params?: UserListParams): Observable<PaginatedUsers>;
   searchUsers(query: string, params?: UserListParams): Observable<PaginatedUsers>;
-  getUserById(id: number): Observable<User>;
+  getUserById(id: string): Observable<User>;
   createUser(payload: CreateUserPayload): Observable<User>;
-  updateUser(id: number, payload: UpdateUserPayload): Observable<User>;
-  deleteUser(id: number): Observable<unknown>;
+  updateUser(id: string, payload: UpdateUserPayload): Observable<User>;
+  deleteUser(id: string): Observable<unknown>;
 }
 
 /**

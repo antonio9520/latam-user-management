@@ -30,8 +30,8 @@ export class UserDetailPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  protected readonly userId = Number(this.route.snapshot.paramMap.get('id'));
-  protected readonly invalidId = isNaN(this.userId) || this.userId <= 0;
+  protected readonly userId = this.route.snapshot.paramMap.get('id') ?? '';
+  protected readonly invalidId = !this.userId;
 
   ngOnInit(): void {
     if (this.invalidId) return;

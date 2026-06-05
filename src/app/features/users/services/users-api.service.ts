@@ -118,20 +118,27 @@ export class UsersApiService {
     );
   }
 
-  getUserById(id: number): Observable<User> {
+  getUserById(id: string): Observable<User> {
     return this.http.get<User>(`/users/${id}`);
   }
 
   createUser(payload: Omit<User, 'id'>): Observable<User> {
-    return this.http.post<User>('/users', payload);
+    return this.http.post<User>('/users', {
+      ...payload,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
   }
 
-  updateUser(id: number, payload: Partial<Omit<User, 'id'>>): Observable<User> {
-    return this.http.patch<User>(`/users/${id}`, payload);
+  updateUser(id: string, payload: Partial<Omit<User, 'id'>>): Observable<User> {
+    return this.http.patch<User>(`/users/${id}`, {
+      ...payload,
+      updatedAt: new Date().toISOString(),
+    });
   }
 
   /** json-server returns {} on DELETE; the store ignores the response body. */
-  deleteUser(id: number): Observable<unknown> {
+  deleteUser(id: string): Observable<unknown> {
     return this.http.delete(`/users/${id}`);
   }
 }

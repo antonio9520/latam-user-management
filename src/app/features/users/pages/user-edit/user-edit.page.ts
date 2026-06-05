@@ -35,7 +35,7 @@ export class UserEditPage implements OnInit, OnDestroy {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
-  protected readonly userId = Number(this.route.snapshot.paramMap.get('id'));
+  protected readonly userId = this.route.snapshot.paramMap.get('id') ?? '';
 
   constructor() {
     effect(() => {

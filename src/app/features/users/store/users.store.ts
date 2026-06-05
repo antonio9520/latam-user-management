@@ -150,7 +150,7 @@ export class UsersStore {
     this._skip.set(skip);
   }
 
-  deleteUser(id: number): void {
+  deleteUser(id: string): void {
     // Snapshot the user before removing so we can roll back on error.
     const snapshot = this._users().find((u) => u.id === id) ?? null;
 
@@ -220,7 +220,7 @@ export class UsersStore {
    * Challenge compliance: destructive actions (deactivate, delete) require
    * explicit confirmation before execution.
    */
-  deactivateUser(id: number): void {
+  deactivateUser(id: string): void {
     this._deactivateStatus.set('deactivating');
     this._deactivateError.set(null);
 
@@ -243,7 +243,7 @@ export class UsersStore {
   }
 
   /** Activates a user by setting active=true via PATCH. */
-  activateUser(id: number): void {
+  activateUser(id: string): void {
     this._activateStatus.set('activating');
     this._activateError.set(null);
 
@@ -268,7 +268,7 @@ export class UsersStore {
     this._activateError.set(null);
   }
 
-  loadUserById(id: number): void {
+  loadUserById(id: string): void {
     this._selectedStatus.set('loading');
     this._selectedError.set(null);
     this._selectedUser.set(null);
@@ -285,7 +285,7 @@ export class UsersStore {
     });
   }
 
-  updateUser(id: number, payload: UpdateUserPayload): void {
+  updateUser(id: string, payload: UpdateUserPayload): void {
     this._saveStatus.set('saving');
     this._saveError.set(null);
 
