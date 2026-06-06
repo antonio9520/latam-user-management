@@ -220,6 +220,18 @@ The application follows a feature-based architecture where all user-related func
 
 ---
 
+# API Choice and Data Consistency
+
+This project uses a local mock REST API powered by json-server.
+
+The main reason for choosing json-server was to keep the data model consistent across the application and avoid introducing artificial transformations that would not persist between requests.
+
+By controlling the API schema through mock-api/db.json, the frontend can work with a stable and predictable data structure, allowing create, update, activation, deactivation, and deletion operations to be reflected directly in the underlying data source.
+
+This approach also avoids the need to generate temporary fields, derive values from other properties, or map different field names between the API and the UI. As a result, the application works with a single, consistent user model throughout the entire codebase.
+
+The goal was to prioritize simplicity, maintainability, and data consistency while demonstrating the required CRUD functionality for the challenge.
+
 # Known Limitations / Technical Debt
 
 ## Internationalization (i18n)
